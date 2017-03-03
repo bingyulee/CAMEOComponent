@@ -1,0 +1,7 @@
+{
+	"STR_HOST" : "Your database address ip",
+    "STR_USER" : "Your user name",
+    "STR_PASSWORD" : "Your user password",
+    "STR_DB" : "Your database name",
+    "STR_CHARSET" : "utf8mb4"
+}
