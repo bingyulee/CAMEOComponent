@@ -28,6 +28,7 @@ class mysqlUtility:
     def Connect(cursorclass = pymysql.cursors.DictCursor):
         if(mysqlUtility.__connection != None):
             mysqlUtility.__connection.close()
+            mysqlUtility.__connection = None
 
         strConfigPath = mysqlUtility.getConfigFilePath()
         config = None
@@ -54,7 +55,7 @@ class mysqlUtility:
     '''
     @staticmethod
     def InsertOrUpdateWhenExist(strTable, dicInsertInfo):
-        if(mysqlUtility.__connection != None):
+        if(mysqlUtility.__connection == None):
             print("[mysqlUtility.InsertOrUpdateWhenExist] DB is not connected, please call mysqlUtility.Connect() at first")
             return
 
@@ -86,7 +87,7 @@ class mysqlUtility:
     '''
     @staticmethod
     def setColumnUnique(strTable, strColumnName):
-        if(mysqlUtility.__connection != None):
+        if(mysqlUtility.__connection == None):
             print("[mysqlUtility.setColumnUnique] DB is not connected, please call mysqlUtility.Connect() at first")
             return
 
@@ -105,7 +106,7 @@ class mysqlUtility:
     '''
     @staticmethod
     def selectData(strTable, lstStrSelectColumn = None, strCondition = None):
-        if(mysqlUtility.__connection != None):
+        if(mysqlUtility.__connection == None):
             print("[mysqlUtility.selectData] DB is not connected, please call mysqlUtility.Connect() at first")
             return
 
@@ -118,7 +119,7 @@ class mysqlUtility:
             strQuery = strQuery + ",".join(lstStrSelectColumn)
         strQuery = strQuery + " FROM " + strTable
         
-        if(strCondition != None):
+        if(strCondition != None and strCondition != ""):
             strQuery = strQuery + " WHERE " + strCondition
         #print(strQuery)
         cursor.execute(strQuery)
@@ -126,14 +127,19 @@ class mysqlUtility:
 
     @staticmethod 
     def Close():
-        if(mysqlUtility.__connection != None):
+        if(mysqlUtility.__connection == None):
             print("[mysqlUtility.Close] DB is not connected, please call mysqlUtility.Connect() at first")
-            return
-            
-        if(mysqlUtility.__connection != None):
+        else:
             mysqlUtility.__connection.close()
             mysqlUtility.__connection = None
 
     @staticmethod
     def getConfigFilePath():
         return os.path.join(os.path.dirname(__file__)) + "/mysqlUtility_config.json"
+
+'''
+#[Example]
+mysqlUtility.Connect()
+print(mysqlUtility.selectData("model_urls_kickstarter", ["strUrl"], strCondition = "strCategory='Art' AND isNeedParse=0 AND intStatus=0"))
+mysqlUtility.Close()
+'''
